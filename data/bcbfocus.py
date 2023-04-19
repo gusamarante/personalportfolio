@@ -3,65 +3,49 @@ from requests import get
 import pandas as pd
 
 
-class FocusScrapper(object):
+def focus_scrapper(table, max_itens=None):
     """
-    New API from the BCB
+    Focus Survey API from the BCB
     https://olinda.bcb.gov.br/olinda/servico/Expectativas/versao/v1/aplicacao#!/recursos
     """
 
-    bcb_tables = {"mensal": "https://olinda.bcb.gov.br/olinda/servico/Expectativas/versao/v1/odata/ExpectativaMercadoMensais?$format=json",
-                  "selic": "https://olinda.bcb.gov.br/olinda/servico/Expectativas/versao/v1/odata/ExpectativasMercadoSelic?$format=json",
-                  "trimestral": "https://olinda.bcb.gov.br/olinda/servico/Expectativas/versao/v1/odata/ExpectativasMercadoTrimestrais?$format=json",
-                  "anual": "https://olinda.bcb.gov.br/olinda/servico/Expectativas/versao/v1/odata/ExpectativasMercadoAnuais?$format=json"}
+    bcb_tables = {"IPCA Mensal": "https://olinda.bcb.gov.br/olinda/servico/Expectativas/versao/v1/odata/ExpectativaMercadoMensais?$filter=Indicador%20eq%20'IPCA'&$format=json",
+                  "IPCA Anual": "https://olinda.bcb.gov.br/olinda/servico/Expectativas/versao/v1/odata/ExpectativasMercadoAnuais?$filter=Indicador%20eq%20'IPCA'&$format=json",
+                  "SELIC Anual": "https://olinda.bcb.gov.br/olinda/servico/Expectativas/versao/v1/odata/ExpectativasMercadoAnuais?$filter=Indicador%20eq%20'Selic'&$format=json"}
 
-    rename_dict = {"Indicador": "index",
-                   "Data": "time_stamp",
-                   "DataReferencia": "prediction_scope",
-                   "baseCalculo": "survey_type"}
-
-    frequencies = {"mensal": "mensal",
-                   "trimestral": "trimestral",
-                   "anual": "anual"}
-
-    id_vars = ["time_stamp", "index", "prediction_scope", "survey_type"]
+    id_vars = ["Indicador", "Data", "DataReferencia", "baseCalculo", "Frequencia"]
 
     value_vars = ["Media", "Mediana", "DesvioPadrao", "Minimo", "Maximo", "numeroRespondentes"]
 
-    def __init__(self, max_itens=10000, bcb_table="mensal"):
+    freq_dict = {
+        "IPCA Mensal": "Mensal",
+        "IPCA Anual": "Anual",
+        "SELIC Anual": "Anual"
+    }
 
-        assert bcb_table in list(self.bcb_tables.keys())
+    assert table in list(bcb_tables.keys()), "Table name not available"
 
-        url = self.bcb_tables[bcb_table]
-        if max_itens is not None:
-            url = url + f"&$top={max_itens}"
+    url = bcb_tables[table]
 
-        response = get(url)
-        response = response.json()
-        response = response["value"]
-        self.df = pd.DataFrame(response)
-        self.df = self.df.rename(self.rename_dict, axis=1)
-        self.df = self.df.melt(id_vars=self.id_vars, value_vars=self.value_vars, var_name="metric")
-        self.df["frequency"] = self.frequencies[bcb_table]
+    if max_itens is not None:
+        url = url + f"&$top={max_itens}"
 
-        if bcb_table == "mensal":
-            self.df["prediction_scope"] = pd.to_datetime(self.df["prediction_scope"]) + MonthEnd(0)
+    response = get(url)
+    response = response.json()
+    response = response["value"]
+    df = pd.DataFrame(response)
 
-        elif bcb_table == "trimestral":
-            self.df["prediction_scope"] = pd.to_datetime(self.df["prediction_scope"]) + QuarterEnd(0)
+    df['Frequencia'] = freq_dict[table]
 
-        elif bcb_table == "anual":
-            self.df["prediction_scope"] = pd.to_datetime(self.df["prediction_scope"]) + YearEnd(0)
+    df = df.melt(id_vars=id_vars, value_vars=value_vars, var_name='Metrica', value_name='Valor')
 
-        self.df = self.df.dropna()
-        self.df = self.df.drop_duplicates(subset=["time_stamp", "index", "prediction_scope", "survey_type", "metric", "frequency"])
+    # Convert type of date variables
+    df["Data"] = pd.to_datetime(df["Data"])
 
-        self.df["index"] = self.df["index"].str.lower()
-        self.df["metric"] = self.df["metric"].str.lower()
-        self.df["frequency"] = self.df["frequency"].str.lower()
+    if freq_dict[table] == "Mensal":
+        df["DataReferencia"] = pd.to_datetime(df["DataReferencia"]) + MonthEnd(0)
 
-        self.df["time_stamp"] = pd.to_datetime(self.df["time_stamp"])
-        self.df["prediction_scope"] = pd.to_datetime(self.df["prediction_scope"])
+    elif freq_dict[table] == "Anual":
+        df["DataReferencia"] = pd.to_datetime(df["DataReferencia"]) + YearEnd(0)
 
-        # Upload to DB
-        # TODO - How do I save this?
-        a = 1
+    return df
