@@ -2,13 +2,12 @@
 Creates the empty database with the desired structure.
 """
 import sqlite3
-
 from data import grab_connection
 
 conn = grab_connection()
 cursor = conn.cursor()
 
-# Create table for the trackers
+# ===== Create table for the trackers =====
 query = "CREATE TABLE trackers (" \
         "'index' TIMESTAMP NOT NULL, " \
         "'variable' TEXT NOT NULL, " \
@@ -20,7 +19,7 @@ try:
 except sqlite3.OperationalError:
         pass
 
-# Create table for the Focus Survey
+# ===== Create table for the Focus Survey =====
 query = "create table `focus` (" \
         "`indicador` varchar(255) not null, " \
         "`data` DATE not null, " \
@@ -40,7 +39,7 @@ except sqlite3.OperationalError:
         pass
 
 
-# Create table for yield curves
+# ===== Create table for yield curves =====
 query = "create table `curves` ( " \
         "`curvename` VARCHAR(255) not null, " \
         "`refdate` DATE not null, " \
@@ -52,6 +51,22 @@ try:
         cursor.execute(query)
 except sqlite3.OperationalError:
         pass
+
+
+# ===== Create table portfolio weights and notionals =====
+query = "create table" \
+        "`portfolio_composition` (" \
+        "`type` VARCHAR(255) not null," \
+        "`asset` VARCHAR(255) not null," \
+        "`date` DATE not null," \
+        "`value` DOUBLE PRECISION not null," \
+        "primary key (`type`, `asset`, `date`)" \
+        ");"
+try:
+        cursor.execute(query)
+except sqlite3.OperationalError:
+        pass
+
 
 # Close the cursor
 cursor.close()
