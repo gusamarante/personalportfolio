@@ -14,6 +14,7 @@ else:  # Assume Mac
 DROPBOX = file_path
 
 
+# Grabs the connection to the database file
 def grab_connection():
     """
     grabs the connection to the SQLite file of my personal database

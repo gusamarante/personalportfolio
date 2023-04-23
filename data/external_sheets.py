@@ -2,7 +2,7 @@ from data import DROPBOX
 from tqdm import tqdm
 import pandas as pd
 
-current_year = pd.to_datetime('today').year
+current_year = int(pd.to_datetime('today').year)
 
 def read_ltn_ntnf(start_year=2003, end_year=current_year):
     """
@@ -48,3 +48,65 @@ def read_ntnb(start_year=2003, end_year=current_year):
     real_bonds = real_bonds.drop(['Unnamed: 0', 'index'], axis=1)
 
     return real_bonds
+
+
+def read_etf(codes=None):
+
+    file_path_etf = DROPBOX.joinpath('data/ETFs.xlsx')
+    df = pd.read_excel(file_path_etf, sheet_name='Prices', skiprows=3, header=0, index_col=0)
+    df = df.iloc[2:]
+    df.index = pd.to_datetime(df.index)
+    df.columns = df.columns.str[:4]
+    df = df.dropna(how='all')
+
+    if codes is not None:
+        df = df[codes]
+
+    return df
+
+
+def read_fip(codes=None):
+
+    file_path_etf = DROPBOX.joinpath('data/FIPs.xlsx')
+    df = pd.read_excel(file_path_etf, sheet_name='Trackers', index_col=0)
+    df.index = pd.to_datetime(df.index)
+    df.columns = df.columns.str[:4]
+    df = df.dropna(how='all')
+
+    if codes is not None:
+        df = df[codes]
+
+    return df
+
+
+def read_fii(codes=None):
+
+    file_path_etf = DROPBOX.joinpath('data/FI-Infra.xlsx')
+    df = pd.read_excel(file_path_etf, sheet_name='Trackers', index_col=0)
+    df.index = pd.to_datetime(df.index)
+    df.columns = df.columns.str[:4]
+    df = df.dropna(how='all')
+
+    if codes is not None:
+        df = df[codes]
+
+    return df
+
+
+def read_ida(codes=None):
+
+    file_path_etf = DROPBOX.joinpath('data/IDA Anbima.xlsx')
+    df = pd.read_excel(file_path_etf, sheet_name='Sheet1', skiprows=3, header=0, index_col=0)
+    df = df.iloc[2:]
+    df.index = pd.to_datetime(df.index)
+    df = df.dropna(how='all')
+
+    df = df.rename({'IDADGRAL Index': 'IDA Geral',
+                    'IDADDI Index': 'IDA DI',
+                    'IDADIPCA Index': 'IDA IPCA'},
+                   axis=1)
+
+    if codes is not None:
+        df = df[codes]
+
+    return df

@@ -9,10 +9,11 @@ cursor = conn.cursor()
 
 # ===== Create table for the trackers =====
 query = "CREATE TABLE trackers (" \
-        "'index' TIMESTAMP NOT NULL, " \
-        "'variable' TEXT NOT NULL, " \
+        "'date' TIMESTAMP NOT NULL, " \
+        "'asset' varchar(255) NOT NULL, " \
+        "'pillar' varchar(255) NOT NULL, " \
         "'value' DOUBLE PRECISION NOT NULL, " \
-        "PRIMARY KEY ('index', variable)" \
+        "PRIMARY KEY ('date', 'asset', 'pillar')" \
         ");"
 try:
         cursor.execute(query)
