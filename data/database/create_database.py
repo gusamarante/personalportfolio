@@ -23,6 +23,7 @@ except sqlite3.OperationalError:
 # ===== Create table for the Focus Survey =====
 query = "create table `focus` (" \
         "`indicador` varchar(255) not null, " \
+        "`frequencia` varchar(255) not null, " \
         "`data` DATE not null, " \
         "`datareferencia` DATE not null, " \
         "`basecalculo` INT not null, " \
@@ -32,7 +33,7 @@ query = "create table `focus` (" \
         "`minimo` DOUBLE PRECISION not null, " \
         "`maximo` DOUBLE PRECISION not null, " \
         "`numerorespondentes` INT not null," \
-        "PRIMARY KEY ('indicador', 'data', 'datareferencia', 'basecalculo')" \
+        "PRIMARY KEY ('indicador', 'data', 'datareferencia', 'basecalculo', 'frequencia')" \
         ");"
 try:
         cursor.execute(query)

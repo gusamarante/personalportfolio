@@ -37,8 +37,6 @@ def focus_scrapper(table, max_itens=None):
 
     df['Frequencia'] = freq_dict[table]
 
-    df = df.melt(id_vars=id_vars, value_vars=value_vars, var_name='Metrica', value_name='Valor')
-
     # Convert type of date variables
     df["Data"] = pd.to_datetime(df["Data"])
 
@@ -47,5 +45,7 @@ def focus_scrapper(table, max_itens=None):
 
     elif freq_dict[table] == "Anual":
         df["DataReferencia"] = pd.to_datetime(df["DataReferencia"]) + YearEnd(0)
+
+    df = df.drop('IndicadorDetalhe', axis=1)
 
     return df
