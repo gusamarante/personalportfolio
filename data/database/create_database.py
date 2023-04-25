@@ -58,10 +58,11 @@ except sqlite3.OperationalError:
 query = "create table" \
         "`portfolio_composition` (" \
         "`type` VARCHAR(255) not null," \
+        "`pillar` VARCHAR(255) not null," \
         "`asset` VARCHAR(255) not null," \
         "`date` DATE not null," \
         "`value` DOUBLE PRECISION not null," \
-        "primary key (`type`, `asset`, `date`)" \
+        "primary key (`type`, `pillar`, `asset`, `date`)" \
         ");"
 try:
         cursor.execute(query)
