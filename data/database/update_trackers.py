@@ -1,4 +1,4 @@
-from data import read_etf, read_ida, tracker_uploader
+from data import read_etf, read_ida, tracker_uploader, read_managers
 
 
 # BR Equities
@@ -10,6 +10,11 @@ tracker_uploader(bre_data, 'br equities')
 # BR Credit
 brc_data = read_ida()
 tracker_uploader(brc_data, 'br credit')
+
+
+# BR Managers
+brm_data = read_managers()
+tracker_uploader(brc_data, 'br managers')
 
 
 # Global Equities
