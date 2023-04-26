@@ -1,6 +1,6 @@
-from calendar.holidays.utils import AbstractBase
+from calendars.holidays.utils import AbstractBase
 from pandas.tseries.holiday import GoodFriday, EasterMonday
-from calendar.holidays.utils import NewYearsDay, UKEarlyMayBank, UKSpringBank,\
+from calendars.holidays.utils import NewYearsDay, UKEarlyMayBank, UKSpringBank,\
     UKLateSummerBank, Christmas, BoxingDay, InternationalLaborDay
 
 
@@ -20,5 +20,5 @@ class LiborEurON(AbstractBase):
         super(LiborEurON, self).__init__(name='libor_eur_on')
 
     def cdr_libor_eur_on(self):
-        """Return calendar for fixed period"""
+        """Return calendars for fixed period"""
         return self._base_caller()

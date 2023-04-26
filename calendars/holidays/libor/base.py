@@ -1,7 +1,7 @@
 from datetime import date
 from pandas.tseries.holiday import AbstractHolidayCalendar, Holiday, \
     GoodFriday, EasterMonday, nearest_workday, next_monday_or_tuesday
-from calendar.holidays.utils import closest_previous_monday, \
+from calendars.holidays.utils import closest_previous_monday, \
     closest_next_monday, Y_END, Y_INI
 
 
@@ -27,7 +27,7 @@ class LiborAllTenorsAndCurrencies(AbstractHolidayCalendar):
             name='libor_all_tenors_currencies', rules=rules)
 
     def cdr_libor_base(self):
-        """Return calendar for fixed period"""
+        """Return calendars for fixed period"""
         h = self.holidays(date(Y_INI - 1, 12, 31), date(Y_END, 12, 31))
         return list(h.date)
 

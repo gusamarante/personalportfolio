@@ -26,7 +26,7 @@ Christmas = Holiday('Christmas', month=12, day=25, observance=sunday_to_monday)
 BoxingDay = Holiday('BoxingDay', month=12, day=26,
                     observance=next_monday_or_tuesday)
 
-# Observance adjustments for Lote's calendar
+# Observance adjustments for Lote's calendars
 USIndependenceDayNearest = Holiday('US Independence Day', month=7, day=4,
                                    observance=nearest_workday)
 

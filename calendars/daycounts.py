@@ -55,7 +55,7 @@ class DayCounts(object):
                 in which case it takes the first valid date earlier (later) in
                 time
         calendar : None, str
-            If specified, it must be the name of a calendar supported by the
+            If specified, it must be the name of a calendars supported by the
             Holidays factory class
         weekmask : str or array)like of bool, default 'Mon Tue Wed Thu Fri'
             From numpy.busday_offset: A seven-element array indicating which
@@ -518,7 +518,7 @@ class DayCounts(object):
         """Calculate number of leap days between two dates, in the interval
         (d1, d2].
         IMPORTANT: Note that the interval above is open below and closed
-        above, as it is standard in calendar day counts (such as NL/365,
+        above, as it is standard in calendars day counts (such as NL/365,
         in our case). This contrasts with function hasleap(d1, d2). To
         understand why, please refer to the help notes on hasleap(d1, d2).
         NOTE: This is not a truly vectorized function, but it mimics the
@@ -751,7 +751,7 @@ class DayCounts(object):
     @calendar.setter
     def calendar(self, x):
         x = Holidays.modify_calendar_name(x)
-        # Save calendar
+        # Save calendars
         self.__cal = x
         # Update buscore engine
         h = Holidays.holidays(cdr=x)

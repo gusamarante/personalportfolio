@@ -89,3 +89,42 @@ def tracker_feeder(conn=None):
     df.index = pd.to_datetime(df.index)
 
     return df
+
+
+def curve_uploader(data, conn=None):
+    """
+    Uploads curve data to the database
+    """
+
+    # If no connection is passed, grabs the default one
+    if conn is None:
+        conn = grab_connection()
+
+    # Drop the old curve
+    curve_names = list(data['curvename'].unique())
+    curve_delete(curve_names, conn)
+
+    # upload the new trackers
+    data.to_sql('curves', con=conn, index=False, if_exists='append')
+
+
+def curve_delete(names, conn=None):
+    """
+    Deletes curves from the databese
+    """
+
+    if conn is None:
+        conn = grab_connection()
+
+    if isinstance(names, list):
+        name_list = "('" + "', '".join(names) + "')"
+        query = f"delete from curves where curvename in {name_list}"
+    elif isinstance(names, str):
+        query = f"delete from curves where curvename = '{names}'"
+    else:
+        raise ValueError("'names' format is not accepted")
+
+    cursor = conn.cursor()
+    cursor.execute(str(query))
+    conn.commit()
+    cursor.close()

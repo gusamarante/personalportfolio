@@ -1,7 +1,7 @@
-from calendar.holidays.utils import AbstractBase
+from calendars.holidays.utils import AbstractBase
 from pandas.tseries.holiday import USMartinLutherKingJr, USPresidentsDay, \
     GoodFriday, USMemorialDay, USLaborDay, USThanksgivingDay
-from calendar.holidays.utils import NewYearsDay, USIndependenceDay, Christmas
+from calendars.holidays.utils import NewYearsDay, USIndependenceDay, Christmas
 
 
 class USTradingCalendar(AbstractBase):
@@ -20,5 +20,5 @@ class USTradingCalendar(AbstractBase):
         super(USTradingCalendar, self).__init__(name='us_trading')
 
     def cdr_us_trading(self):
-        """Return calendar for fixed period"""
+        """Return calendars for fixed period"""
         return self._base_caller()
