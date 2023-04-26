@@ -11,7 +11,8 @@ def focus_scrapper(table, max_itens=None):
 
     bcb_tables = {"IPCA Mensal": "https://olinda.bcb.gov.br/olinda/servico/Expectativas/versao/v1/odata/ExpectativaMercadoMensais?$filter=Indicador%20eq%20'IPCA'&$format=json",
                   "IPCA Anual": "https://olinda.bcb.gov.br/olinda/servico/Expectativas/versao/v1/odata/ExpectativasMercadoAnuais?$filter=Indicador%20eq%20'IPCA'&$format=json",
-                  "SELIC Anual": "https://olinda.bcb.gov.br/olinda/servico/Expectativas/versao/v1/odata/ExpectativasMercadoAnuais?$filter=Indicador%20eq%20'Selic'&$format=json"}
+                  "SELIC Anual": "https://olinda.bcb.gov.br/olinda/servico/Expectativas/versao/v1/odata/ExpectativasMercadoAnuais?$filter=Indicador%20eq%20'Selic'&$format=json",
+                  "SELIC Mensal": ""}  # TODO ADD THIS
 
     id_vars = ["Indicador", "Data", "DataReferencia", "baseCalculo", "Frequencia"]
 
