@@ -1,13 +1,6 @@
-import matplotlib.pyplot as plt
-from data import DROPBOX, read_ltn_ntnf, tracker_uploader
+from data import read_ltn_ntnf, tracker_uploader
 from tqdm import tqdm
-from time import time
 import pandas as pd
-import numpy as np
-
-pd.set_option('display.max_rows', 100)
-pd.set_option('display.max_columns', 50)
-pd.set_option('display.width', 250)
 
 # User defined parameters
 notional_start = 100

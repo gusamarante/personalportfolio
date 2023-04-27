@@ -1,12 +1,6 @@
-import matplotlib.pyplot as plt
-from data import DROPBOX, read_ltn_ntnf, tracker_uploader
+from data import read_ltn_ntnf, tracker_uploader
 from tqdm import tqdm
-from time import time
 import pandas as pd
-
-pd.set_option('display.max_rows', 100)
-pd.set_option('display.max_columns', 50)
-pd.set_option('display.width', 250)
 
 # User defined parameters
 desired_duration = [0.5, 1, 1.5, 2, 3, 4, 5, 6, 7, 8]  # in years
