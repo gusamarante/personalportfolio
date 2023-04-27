@@ -4,3 +4,4 @@ from data.database import update_focus
 from br_nominal_rates import value_focus_survey
 from br_nominal_rates import tracker_fixed_duration
 from br_nominal_rates import tracker_single_bonds
+from br_nominal_rates import curve_nominal_zero_coupon
