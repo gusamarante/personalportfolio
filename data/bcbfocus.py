@@ -47,6 +47,9 @@ def focus_scrapper(table, max_itens=None):
     elif freq_dict[table] == "Anual":
         df["DataReferencia"] = pd.to_datetime(df["DataReferencia"]) + YearEnd(0)
 
-    df = df.drop('IndicadorDetalhe', axis=1)
+    try:
+        df = df.drop('IndicadorDetalhe', axis=1)
+    except KeyError:
+        pass
 
     return df
