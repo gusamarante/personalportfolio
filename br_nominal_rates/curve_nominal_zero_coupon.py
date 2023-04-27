@@ -12,7 +12,7 @@ warnings.filterwarnings("ignore")
 # User defined parameters
 notional_start = 100
 trading_cost = 0 # times the bidask spread
-start_date = '2023-04-01'
+start_date = '2006-01-01'
 
 dc = DayCounts(dc='bus/252', calendar='anbima')
 
@@ -93,7 +93,7 @@ ntnf = read_ltn_ntnf()
 ntnf = ntnf[ntnf['reference date'] >= start_date]
 dates2loop = pd.to_datetime(ntnf['reference date'].unique())
 # dates2loop = dates2loop[dates2loop >= start_date]
-ano = 2006
+ano = 2007  # ja rodei o 2006, fazer de 2007 em diante
 dates2loop = dates2loop[dates2loop >= f'{ano}-01-01']
 dates2loop = dates2loop[dates2loop <= f'{ano}-12-31']
 
