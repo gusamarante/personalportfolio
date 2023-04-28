@@ -14,7 +14,7 @@ tracker_uploader(brc_data, 'br credit')
 
 # BR Managers
 brm_data = read_managers()
-tracker_uploader(brc_data, 'br managers')
+tracker_uploader(brm_data, 'br managers')
 
 
 # Global Equities

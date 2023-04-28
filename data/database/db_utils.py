@@ -85,7 +85,7 @@ def tracker_feeder(conn=None):
 
     query = 'SELECT * FROM trackers'
     df = pd.read_sql(sql=query, con=conn)
-    df = df.pivot('date', ['pillar', 'asset'], 'value')
+    df = df.pivot(index='date', columns=['pillar', 'asset'], values='value')
     df.index = pd.to_datetime(df.index)
 
     return df
