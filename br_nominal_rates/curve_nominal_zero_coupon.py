@@ -93,7 +93,7 @@ ntnf = read_ltn_ntnf()
 ntnf = ntnf[ntnf['reference date'] >= start_date]
 dates2loop = pd.to_datetime(ntnf['reference date'].unique())
 # dates2loop = dates2loop[dates2loop >= start_date]
-ano = 2007  # ja rodei o 2006, fazer de 2007 em diante
+ano = 2008  # ja rodei até 2007, fazer de 2008 em diante
 dates2loop = dates2loop[dates2loop >= f'{ano}-01-01']
 dates2loop = dates2loop[dates2loop <= f'{ano}-12-31']
 
