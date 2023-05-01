@@ -91,7 +91,7 @@ def tracker_feeder(conn=None):
     return df
 
 
-def curve_uploader(data, conn=None):
+def curve_uploader(data, conn=None, delete_first=True): # TODO option to delet first
     """
     Uploads curve data to the database
     """
@@ -101,8 +101,9 @@ def curve_uploader(data, conn=None):
         conn = grab_connection()
 
     # Drop the old curve
-    curve_names = list(data['curvename'].unique())
-    curve_delete(curve_names, conn)
+    if delete_first:
+        curve_names = list(data['curvename'].unique())
+        curve_delete(curve_names, conn)
 
     # upload the new trackers
     data.to_sql('curves', con=conn, index=False, if_exists='append')
