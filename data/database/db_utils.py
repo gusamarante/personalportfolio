@@ -129,3 +129,19 @@ def curve_delete(names, conn=None):
     cursor.execute(str(query))
     conn.commit()
     cursor.close()
+
+
+def curve_feeder(conn=None):
+    """
+    Read all of the curves
+    """
+    # If no connection is passed, grabs the default one
+    if conn is None:
+        conn = grab_connection()
+
+    query = 'SELECT * FROM curves'
+    df = pd.read_sql(sql=query, con=conn)
+    df = df.pivot(index='refdate', columns=['curvename', 'daycount'], values='yield')
+    df.index = pd.to_datetime(df.index)
+
+    return df
