@@ -26,3 +26,21 @@ def timeseries_momentum(data, com=60, hp=252):
     ret_sign = np.sign(ret)
 
     return ret, ret_scaled, ret_sign
+
+
+def macross(data, window_fast=21, window_slow=252, window_type='rolling'):
+    """
+    I have a hard time seeing this as a measure of momentum. Intuitively, this looks more lake a value measure
+    """
+
+    if window_type == 'rolling':
+        ma_fast = data.rolling(window_fast).mean()
+        ma_slow = data.rolling(window_slow).mean()
+    elif window_type == 'ewm':
+        ma_fast = data.ewm(com=window_fast).mean()
+        ma_slow = data.ewm(com=window_slow).mean()
+    else:
+        raise AssertionError("window method not implemented")
+
+    signal = ma_slow / ma_fast - 1
+    return signal

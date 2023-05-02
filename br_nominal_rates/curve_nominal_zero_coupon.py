@@ -93,9 +93,9 @@ ntnf = read_ltn_ntnf()
 ntnf = ntnf[ntnf['reference date'] >= start_date]
 dates2loop = pd.to_datetime(ntnf['reference date'].unique())
 # dates2loop = dates2loop[dates2loop >= start_date]
-ano = 2019
-dates2loop = dates2loop[dates2loop >= f'{2020}-01-01']
-dates2loop = dates2loop[dates2loop <= f'{2022}-12-31']
+ano = 2019 # já rodei até 2019, tem que ir de 2018 pra trás
+dates2loop = dates2loop[dates2loop >= f'{ano}-01-01']
+dates2loop = dates2loop[dates2loop <= f'{ano}-12-31']
 
 df_yield_curve = pd.DataFrame()
 
