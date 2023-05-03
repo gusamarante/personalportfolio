@@ -1,5 +1,5 @@
 from data import tracker_feeder
-from finmath import Performance
+from portfolio import Performance
 
 df = tracker_feeder()
 df = df['br managers']
