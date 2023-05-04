@@ -71,5 +71,21 @@ except sqlite3.OperationalError:
         pass
 
 
+# ===== Create table for return forecasting signals =====
+query = "create table" \
+        "`signals` (" \
+        "`family` VARCHAR(255) not null," \
+        "`pillar` VARCHAR(255) not null," \
+        "`asset` VARCHAR(255) not null," \
+        "`date` DATE not null," \
+        "`value` DOUBLE PRECISION not null," \
+        "primary key (`family`, `pillar`, `asset`, `date`)" \
+        ");"
+try:
+        cursor.execute(query)
+except sqlite3.OperationalError:
+        pass
+
+
 # Close the cursor
 cursor.close()

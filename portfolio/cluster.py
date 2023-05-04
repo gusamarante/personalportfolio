@@ -1,5 +1,6 @@
 """
-This is not finished nearly finished. I just started
+This is not finished nearly finished. I just started.
+It is supposed to be a asset clustering routine
 """
 
 from data import tracker_feeder, sgs
