@@ -21,6 +21,7 @@ df = df.dropna(how='all', axis=1)
 mats2keepy = [0.5, 1, 1.5, 2, 3, 4, 5, 6, 7, 8]
 mats2keep = [mat*252 for mat in mats2keepy]
 df = df[mats2keep]
+df = df.dropna(axis=1)
 
 # PCA
 pca = PCA(n_components=3)
@@ -30,8 +31,8 @@ df_var_full = pd.Series(data=pca.explained_variance_ratio_,
                         index=['PC 1', 'PC 2', 'PC 3'])
 df_loadings_full = pd.DataFrame(data=pca.components_.T,
                                 columns=['PC 1', 'PC 2', 'PC 3'],
-                                index=mats2keepy)
-df_mean_full = pd.DataFrame(data=pca.mean_, index=mats2keepy,
+                                index=df.columns)
+df_mean_full = pd.DataFrame(data=pca.mean_, index=df.columns,
                             columns=['Médias'])
 df_pca_full = pd.DataFrame(data=pca.transform(df.values),
                            columns=['PC 1', 'PC 2', 'PC 3'],
@@ -44,3 +45,5 @@ df_pca_full = df_pca_full * signal
 # TODO Everything that comes from PCA
 # TODO - The PC Themselves
 # TODO - Curve Forecast for different horizons
+
+a = 1
