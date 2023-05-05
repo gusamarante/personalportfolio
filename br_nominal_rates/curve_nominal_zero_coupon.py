@@ -93,7 +93,7 @@ ntnf = read_ltn_ntnf()
 ntnf = ntnf[ntnf['reference date'] >= start_date]
 dates2loop = pd.to_datetime(ntnf['reference date'].unique())
 # dates2loop = dates2loop[dates2loop >= start_date]
-ano = 2012 # Ja rodou o 2012
+ano = 2023
 dates2loop = dates2loop[dates2loop >= f'{ano}-01-01']
 dates2loop = dates2loop[dates2loop <= f'{ano}-12-31']
 
@@ -140,4 +140,4 @@ for today in tqdm(dates2loop, 'Bootstrapping Nominal Bonds'):
 df_yield_curve = df_yield_curve.dropna()
 df_yield_curve['curvename'] = 'br nominal bonds'
 
-curve_uploader(df_yield_curve, delete_first=False)
+curve_uploader(df_yield_curve, delete_first=True, year=ano)

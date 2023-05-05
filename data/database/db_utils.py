@@ -4,7 +4,6 @@ import getpass
 import os
 import pandas as pd
 
-
 # Creates a constant (DROPBOX) that holds the path to my working directory
 username = getpass.getuser()
 if os.environ.get('OS') == 'Windows_NT':
@@ -91,10 +90,13 @@ def tracker_feeder(conn=None):
     return df
 
 
-def curve_uploader(data, conn=None, delete_first=True): # TODO option to delet first
+def curve_uploader(data, conn=None, delete_first=False, year=None): # TODO option to delet first
     """
     Uploads curve data to the database
     """
+
+    if delete_first:
+        assert year is not None, "A year must be passed in order to delete a curve"
 
     # If no connection is passed, grabs the default one
     if conn is None:
@@ -103,13 +105,18 @@ def curve_uploader(data, conn=None, delete_first=True): # TODO option to delet f
     # Drop the old curve
     if delete_first:
         curve_names = list(data['curvename'].unique())
-        curve_delete(curve_names, conn)
+        if len(curve_names) == 1 and isinstance(curve_names, list):
+            curve_names = curve_names[0]
+        else:
+            raise AssertionError('Only 1 curve can be uploaded at a time')
+
+        curve_delete(names=curve_names, year=year, conn=conn)
 
     # upload the new trackers
     data.to_sql('curves', con=conn, index=False, if_exists='append')
 
 
-def curve_delete(names, conn=None):
+def curve_delete(names, year, conn=None):
     """
     Deletes curves from the databese
     """
@@ -117,13 +124,10 @@ def curve_delete(names, conn=None):
     if conn is None:
         conn = grab_connection()
 
-    if isinstance(names, list):
-        name_list = "('" + "', '".join(names) + "')"
-        query = f"delete from curves where curvename in {name_list}"
-    elif isinstance(names, str):
-        query = f"delete from curves where curvename = '{names}'"
-    else:
-        raise ValueError("'names' format is not accepted")
+    query = f"delete from curves " \
+            f"where curvename = '{names}' " \
+            f"and refdate >= '{year}-01-01' " \
+            f"and refdate <= '{year}-12-31';"
 
     cursor = conn.cursor()
     cursor.execute(str(query))
