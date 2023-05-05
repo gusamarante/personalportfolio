@@ -90,7 +90,7 @@ def tracker_feeder(conn=None):
     return df
 
 
-def curve_uploader(data, conn=None, delete_first=False, year=None): # TODO option to delet first
+def curve_uploader(data, conn=None, delete_first=False, year=None):
     """
     Uploads curve data to the database
     """
@@ -149,3 +149,42 @@ def curve_feeder(conn=None):
     df.index = pd.to_datetime(df.index)
 
     return df
+
+
+def signal_uploader(data, conn=None):
+    """
+    Uploads signal data to the database
+    """
+
+    signal_family = list(data['signal_family'].unique())
+    signal_name = list(data['signal_name'].unique())
+    pillar = list(data['pillar'].unique())
+    assets = list(data['asset'].unique())
+
+    # If no connection is passed, grabs the default one
+    if conn is None:
+        conn = grab_connection()
+
+    # Drop the old curve
+    signal_delete(signal_family=signal_family, signal_name=signal_name, pillar=pillar, asset=assets, conn=conn)
+
+    # upload the new trackers
+    data.to_sql('signals', con=conn, index=False, if_exists='append')
+
+
+def signal_delete(signal_family, signal_name, pillar, asset, conn):
+    signal_family = "('" + "', '".join(signal_family) + "')"
+    signal_name = "('" + "', '".join(signal_name) + "')"
+    pillar = "('" + "', '".join(pillar) + "')"
+    asset = "('" + "', '".join(asset) + "')"
+
+    query = f"delete from signals " \
+            f"where signal_family in {signal_family} " \
+            f"and signal_name in {signal_name} " \
+            f"and pillar in {pillar} " \
+            f"and asset in {asset};"
+
+    cursor = conn.cursor()
+    cursor.execute(str(query))
+    conn.commit()
+    cursor.close()

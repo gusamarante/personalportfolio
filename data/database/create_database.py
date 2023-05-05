@@ -74,12 +74,13 @@ except sqlite3.OperationalError:
 # ===== Create table for return forecasting signals =====
 query = "create table" \
         "`signals` (" \
-        "`family` VARCHAR(255) not null," \
+        "`signal_family` VARCHAR(255) not null," \
+        "`signal_name` VARCHAR(255) not null," \
         "`pillar` VARCHAR(255) not null," \
         "`asset` VARCHAR(255) not null," \
-        "`date` DATE not null," \
+        "`refdate` DATE not null," \
         "`value` DOUBLE PRECISION not null," \
-        "primary key (`family`, `pillar`, `asset`, `date`)" \
+        "primary key (`signal_family`, `signal_name`, `pillar`, `asset`, `refdate`)" \
         ");"
 try:
         cursor.execute(query)
