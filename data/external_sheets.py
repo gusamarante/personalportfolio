@@ -181,7 +181,9 @@ def read_managers():
                    'ASSTIA1 BZ Equity': 'A1 HEDGE',
                    'ZARAFIM BZ Equity': 'GIANT ZARATHUSTRA',
                    'IPKCHRN BZ Equity': 'KINEA CHRONOS',
-                   'NEOMSTR BZ Equity': 'NEO MULTI'}
+                   'NEOMSTR BZ Equity': 'NEO MULTI',
+                   'MANTIMS BZ Equity': 'MANTIQUEIRA',
+                   'KPCP35F BZ Equity': 'KP WEALTH CP 35'}
 
     df = df.rename(rename_dict, axis=1)
     df = df.dropna(how='all')
