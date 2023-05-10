@@ -188,3 +188,19 @@ def signal_delete(signal_family, signal_name, pillar, asset, conn):
     cursor.execute(str(query))
     conn.commit()
     cursor.close()
+
+
+def signal_feeder(conn=None):
+    """
+    Read all of the signals
+    """
+    # If no connection is passed, grabs the default one
+    if conn is None:
+        conn = grab_connection()
+
+    query = 'SELECT * FROM signals'
+    df = pd.read_sql(sql=query, con=conn)
+    df = df.pivot(index='refdate', columns=['asset', 'signal_name'], values='value')
+    df.index = pd.to_datetime(df.index)
+
+    return df
