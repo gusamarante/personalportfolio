@@ -53,24 +53,6 @@ class Regression(object):
 
             self.one_by_one_table = table_obo
 
-
-
-
-
-
-
-
-# TODO APAGAR
-trackers = tracker_feeder()
-trackers = trackers['br nominal rates']['NTNF 8y'].dropna()
-trackers = trackers.resample('M').last()
-trackers = trackers.pct_change(1)
-
-signals = signal_feeder()
-signals = signals['NTNF 8y']
-signals = signals.shift(1)
-signals = signals.resample('M').last().shift(1)
-
-reg = Regression(signals, trackers, one_by_one=True)
-print(reg.one_by_one_table)
-reg.one_by_one_table.to_clipboard()
+    def forecast(self, x):
+        x.loc['const'] = 1
+        return (self.full_results.params * x).sum()
