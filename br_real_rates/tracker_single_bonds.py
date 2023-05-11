@@ -38,4 +38,4 @@ for bond in bonds2loop:
     df_trackers = pd.concat([df_trackers, aux_data['tracker'].rename(bond_name)], axis=1)
 
 df_trackers = df_trackers.sort_index()
-tracker_uploader(df_trackers, 'br real rates')
+tracker_uploader(df_trackers, 'br single real rates')
