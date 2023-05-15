@@ -156,33 +156,24 @@ def signal_uploader(data, conn=None):
     Uploads signal data to the database
     """
 
-    signal_family = list(data['signal_family'].unique())
     signal_name = list(data['signal_name'].unique())
-    pillar = list(data['pillar'].unique())
-    assets = list(data['asset'].unique())
 
     # If no connection is passed, grabs the default one
     if conn is None:
         conn = grab_connection()
 
     # Drop the old curve
-    signal_delete(signal_family=signal_family, signal_name=signal_name, pillar=pillar, asset=assets, conn=conn)
+    signal_delete(signal_name=signal_name, conn=conn)
 
     # upload the new trackers
     data.to_sql('signals', con=conn, index=False, if_exists='append')
 
 
-def signal_delete(signal_family, signal_name, pillar, asset, conn):
-    signal_family = "('" + "', '".join(signal_family) + "')"
+def signal_delete(signal_name, conn):
     signal_name = "('" + "', '".join(signal_name) + "')"
-    pillar = "('" + "', '".join(pillar) + "')"
-    asset = "('" + "', '".join(asset) + "')"
 
     query = f"delete from signals " \
-            f"where signal_family in {signal_family} " \
-            f"and signal_name in {signal_name} " \
-            f"and pillar in {pillar} " \
-            f"and asset in {asset};"
+            f"where signal_name in {signal_name};"
 
     cursor = conn.cursor()
     cursor.execute(str(query))
@@ -200,7 +191,7 @@ def signal_feeder(conn=None):
 
     query = 'SELECT * FROM signals'
     df = pd.read_sql(sql=query, con=conn)
-    df = df.pivot(index='refdate', columns=['asset', 'signal_name'], values='value')
+    df = df.pivot(index='refdate', columns='signal_name', values='value')
     df.index = pd.to_datetime(df.index)
 
     return df

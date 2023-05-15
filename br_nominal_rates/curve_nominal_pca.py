@@ -30,18 +30,18 @@ df = df[mats2keep]
 df = df.dropna(axis=1)
 
 # PCA
-pca = PCA(n_components=3)
+pca = PCA(n_components=5)
 pca.fit(df.values)
 
 df_var_full = pd.Series(data=pca.explained_variance_ratio_,
-                        index=['PC 1', 'PC 2', 'PC 3'])
+                        index=['BR Nominal PC 1', 'BR Nominal PC 2', 'BR Nominal PC 3', 'BR Nominal PC 4', 'BR Nominal PC 5'])
 df_loadings_full = pd.DataFrame(data=pca.components_.T,
-                                columns=['PC 1', 'PC 2', 'PC 3'],
+                                columns=['BR Nominal PC 1', 'BR Nominal PC 2', 'BR Nominal PC 3', 'BR Nominal PC 4', 'BR Nominal PC 5'],
                                 index=df.columns)
 df_mean_full = pd.DataFrame(data=pca.mean_, index=df.columns,
                             columns=['Médias'])
 df_pca_full = pd.DataFrame(data=pca.transform(df.values),
-                           columns=['PC 1', 'PC 2', 'PC 3'],
+                           columns=['BR Nominal PC 1', 'BR Nominal PC 2', 'BR Nominal PC 3', 'BR Nominal PC 4', 'BR Nominal PC 5'],
                            index=df.index)
 
 signal = np.sign(df_loadings_full.iloc[-1])
@@ -51,11 +51,5 @@ df_pca_full = df_pca_full * signal
 df_signal = df_pca_full.melt(ignore_index=False)
 df_signal = df_signal.reset_index(names='refdate')
 df_signal = df_signal.rename({'variable': 'signal_name'}, axis=1)
-df_signal['signal_family'] = 'value'
-df_signal['pillar'] = 'br nominal bonds'
 
-for bond in df_tracker.columns:
-    aux = df_signal.copy()
-    aux['asset'] = bond
-    signal_uploader(aux)
-
+signal_uploader(df_signal)
