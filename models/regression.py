@@ -3,6 +3,7 @@ import statsmodels.api as sm
 import numpy as np
 from data import tracker_feeder, signal_feeder  # TODO Apagar
 
+# TODO Lasso/Ridge Regression
 
 class Regression(object):
     one_by_one_table = None
