@@ -11,12 +11,20 @@ df = df['br equities'].dropna(how='all')
 eri = compute_eri(df)
 
 # Equal weighted
-ew = equal_weighted(eri)
+eri_ew, w_ew = equal_weighted(eri)  # TODO rethink how to report weights - TS, static, latest?
 
 # Inverse Vol
-inv_vol = inverse_vol(eri)
+eri_iv, w_iv = inverse_vol(eri)
 
 
-df2plot = pd.concat([ew, inv_vol], axis=1)
-df2plot.plot(grid=True)
+df_eri = pd.concat([eri_ew, eri_iv], axis=1)
+df_eri.plot(grid=True, title='ERIs')
+plt.show()
+
+df_w = pd.concat([w_ew.iloc[-1].rename('EW'),
+                    w_iv.iloc[-1].rename('IV')], axis=1)
+df_w = df_w.fillna(0)
+ax = df_w.plot(grid=True, title='Weights', kind='bar')
+df_w['Mean'] = df_w.mean(axis=1)
+ax = ax.plot(df_w['Mean'], color='black')
 plt.show()
