@@ -4,6 +4,7 @@ import seaborn as sns
 from utils import cov2corr
 import matplotlib.pyplot as plt
 import scipy.cluster.hierarchy as sch
+from scipy.optimize import minimize, Bounds
 
 
 class EqualWeighted(object):
@@ -53,12 +54,60 @@ class InverseVol(object):
         self.eri = inv_vol
 
 
+class MinVar(object):
+    """
+    Implements Minimal Variance Portfolio
+    """
+
+    def __init__(self, eri, short_sell=True):
+        """
+        Combines the assets in 'data' by finding the minimal variance portfolio
+        returns an object with the following atributes:
+            - 'cov': covariance matrix of the returns
+            - 'weights': final weights for each asset
+        :param eri: pandas DataFrame where each column is a series of returns
+        """
+
+        assert isinstance(eri, pd.DataFrame), "input 'data' must be a pandas DataFrame"
+
+        self.cov = eri.dropna().cov()
+
+        eq_cons = {'type': 'eq',
+                   'fun': lambda w: w.sum() - 1}
+
+        if short_sell:
+            bounds = None
+        else:
+            bounds = Bounds(np.zeros(self.cov.shape[0]), np.ones(self.cov.shape[0]))
+
+        w0 = np.zeros(self.cov.shape[0])
+        res = minimize(self._port_var, w0, method='SLSQP', constraints=eq_cons,
+                       bounds=bounds, options={'disp': False})
+
+        if not res.success:
+            raise ArithmeticError('Convergence Failed')
+
+        self.weights = pd.Series(data=res.x, index=self.cov.columns, name='Min Var')
+
+        ret = eri.pct_change(1)
+        minvar = ret * self.weights
+        minvar = minvar.dropna(how='all')
+        minvar = minvar.sum(axis=1)
+        minvar = (1 + minvar).cumprod()
+        minvar = 100 * minvar / minvar.iloc[0]
+        minvar = minvar.rename('Min Var')
+        self.eri = minvar
+
+    def _port_var(self, w):
+        return w.dot(self.cov).dot(w)
+
+
 class HRP(object):
     """
     Implements Hierarchical Risk Parity
     """
 
-    def __init__(self, eri, cov, method='single', metric='euclidean'):
+    def __init__(self, eri, method='single', metric='euclidean'):
         """
         Combines the assets in `data` using HRP
         returns an object with the following attributes:
@@ -76,10 +125,8 @@ class HRP(object):
         :param metric: any metric available in scipy.cluster.hierarchy.linkage
         """
 
-        assert isinstance(cov, pd.DataFrame), "input 'cov' must be a pandas DataFrame"
-
-        self.cov = cov
-        self.corr, self.vols = cov2corr(cov)
+        self.cov = eri.pct_change(1).dropna().cov()
+        self.corr, self.vols = cov2corr(self.cov)
         self.method = method
         self.metric = metric
 
