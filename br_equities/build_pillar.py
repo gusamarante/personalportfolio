@@ -2,7 +2,7 @@ import pandas as pd
 from utils import compute_eri
 import matplotlib.pyplot as plt
 from data import tracker_feeder
-from portfolio import EqualWeighted, InverseVol, HRP, MinVar
+from portfolio import EqualWeighted, InverseVol, HRP, MinVar, ERC
 
 # Data
 df = tracker_feeder()
@@ -25,6 +25,7 @@ hrp = HRP(eri)
 # Max Sharpe
 
 # ERC
+erc = ERC(eri, short_sell=False)
 
 # Min Variance
 mv = MinVar(eri, short_sell=False)
@@ -32,12 +33,12 @@ mv = MinVar(eri, short_sell=False)
 
 # ===== Charts =====
 # ERI
-df_eri = pd.concat([ew.eri, iv.eri, hrp.eri, mv.eri], axis=1)
+df_eri = pd.concat([ew.eri, iv.eri, hrp.eri, mv.eri, erc.eri], axis=1)
 df_eri.plot(grid=True, title='ERIs')
 plt.show()
 
 # Weights
-df_w = pd.concat([ew.weights, iv.weights, hrp.weights, mv.weights], axis=1)
+df_w = pd.concat([ew.weights, iv.weights, hrp.weights, mv.weights, erc.weights], axis=1)
 df_w = df_w.fillna(0)
 df_w['Mean'] = df_w.mean(axis=1)
 df_w = df_w.sort_values('Mean')

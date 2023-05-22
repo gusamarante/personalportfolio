@@ -247,3 +247,49 @@ class HRP(object):
             plt.show()
 
         plt.close()
+
+
+class ERC(object):
+    """
+    Implements Equal Risk Contribution portfolio
+    """
+
+    def __init__(self, eri, short_sell=True):
+        # TODO Documentation
+        self.cov = eri.pct_change(1).dropna().cov()
+        self.n_assets = self.cov.shape[0]
+
+        if short_sell:
+            bounds = None
+        else:
+            bounds = np.hstack([np.zeros((self.n_assets, 1)), np.ones((self.n_assets, 1))])
+
+        cons = ({'type': 'ineq',
+                 'fun': lambda w: self._port_vol(w)},  # <= 0
+                {'type': 'eq',
+                 'fun': lambda w: 1 - w.sum()})  # == 0
+        w0 = np.zeros(self.n_assets)
+        res = minimize(self._dist_to_target, w0, method='SLSQP', constraints=cons, bounds=bounds)
+        self.weights = pd.Series(index=eri.columns, data=res.x, name='ERC')
+        self.vol = np.sqrt(res.x @ self.cov @ res.x)
+        self.marginal_risk = (res.x @ self.cov) / self.vol
+        self.risk_contribution = self.marginal_risk * res.x  # These add up to the vol
+        self.risk_contribution_ratio = self.risk_contribution / self.vol  # These add up to one
+
+        ret = eri.pct_change(1)
+        erc = ret * self.weights
+        erc = erc.dropna(how='all')
+        erc = erc.sum(axis=1)
+        erc = (1 + erc).cumprod()
+        erc = 100 * erc / erc.iloc[0]
+        erc = erc.rename('ERC')
+        self.eri = erc
+
+    def _port_vol(self, w):
+        return np.sqrt(w.dot(self.cov).dot(w))
+
+    def _risk_contribution(self, w):
+        return w * ((w @ self.cov) / (self._port_vol(w)**2))
+
+    def _dist_to_target(self, w):
+        return np.abs(self._risk_contribution(w) - np.ones(self.n_assets)/self.n_assets).sum()
