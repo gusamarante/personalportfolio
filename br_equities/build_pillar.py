@@ -2,7 +2,7 @@ import pandas as pd
 from data import tracker_feeder
 from utils import compute_eri
 import matplotlib.pyplot as plt
-from portfolio import EqualWeighted, InverseVol
+from portfolio import EqualWeighted, InverseVol, HRP
 import numpy as np
 
 df = tracker_feeder()
@@ -17,14 +17,21 @@ ew = EqualWeighted(eri)
 iv = InverseVol(eri, com=252)
 
 # Hirarchical Risk Parity
-# TODO Parei aqui
+cov = eri.pct_change(1).dropna().cov()
+hrp = HRP(eri, cov)
+hrp.plot_corr_matrix()
+hrp.plot_dendrogram()
+
+# Max Sharpe
+
+# ERC
 
 # Charts
-df_eri = pd.concat([ew.eri, iv.eri], axis=1)
+df_eri = pd.concat([ew.eri, iv.eri, hrp.eri], axis=1)
 df_eri.plot(grid=True, title='ERIs')
 plt.show()
 
-df_w = pd.concat([ew.weights, iv.weights], axis=1)
+df_w = pd.concat([ew.weights, iv.weights, hrp.weights], axis=1)
 df_w = df_w.fillna(0)
 df_w['Mean'] = df_w.mean(axis=1)
 df_w = df_w.sort_values('Mean')
