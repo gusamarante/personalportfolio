@@ -2,7 +2,7 @@ import pandas as pd
 from utils import compute_eri
 import matplotlib.pyplot as plt
 from data import tracker_feeder
-from portfolio import EqualWeighted, InverseVol, HRP, MinVar, ERC
+from portfolio import Performance, EqualWeighted, InverseVol, HRP, MinVar, ERC
 
 # Data
 df = tracker_feeder()
@@ -32,8 +32,13 @@ mv = MinVar(eri, short_sell=False)
 
 
 # ===== Charts =====
-# ERI
 df_eri = pd.concat([ew.eri, iv.eri, hrp.eri, mv.eri, erc.eri], axis=1)
+
+# Performance
+perf = Performance(df_eri)
+print(perf.table)
+
+# ERI
 df_eri.plot(grid=True, title='ERIs')
 plt.show()
 
