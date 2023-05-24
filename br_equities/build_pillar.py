@@ -2,14 +2,22 @@ import pandas as pd
 from utils import compute_eri
 import matplotlib.pyplot as plt
 from data import tracker_feeder
-from portfolio import Performance, EqualWeighted, InverseVol, HRP, MinVar, ERC
+from portfolio import Performance, EqualWeighted, InverseVol, HRP, MinVar, ERC, MaxSharpe
+pd.set_option('display.max_columns', 500)
+pd.set_option('display.width', 1000)
+
+# TODO Correct weighting for missing weights
 
 # Data
 df = tracker_feeder()
 df = df['br equities'].dropna(how='all')
+df = df[['BOVA', 'BBSD', 'SMAL']]
 eri = compute_eri(df)
+cov = eri.pct_change(1).dropna().cov() * 252
+perf_asset = Performance(eri)
+print(perf_asset.table)
 
-#  ===== Construction Methods =====
+# ===== Construction Methods =====
 # Equal weighted
 ew = EqualWeighted(eri)
 
@@ -17,33 +25,35 @@ ew = EqualWeighted(eri)
 iv = InverseVol(eri, com=252)
 
 # Hirarchical Risk Parity
-cov = eri.pct_change(1).dropna().cov()
-hrp = HRP(eri)
-# hrp.plot_corr_matrix()
-# hrp.plot_dendrogram()
+hrp = HRP(cov=cov, eri=eri)
+hrp.plot_corr_matrix()
+hrp.plot_dendrogram()
 
 # Max Sharpe
+mu = perf_asset.std * 0.1
+ms = MaxSharpe(mu=mu, cov=cov, eri=eri, risk_aversion=2, short_sell=False)
+ms.plot()
 
 # ERC
-erc = ERC(eri, short_sell=False)
+erc = ERC(cov=cov, eri=eri, short_sell=False)
 
 # Min Variance
-mv = MinVar(eri, short_sell=False)
+mv = MinVar(cov=cov, eri=eri, short_sell=False)
 
 
 # ===== Charts =====
-df_eri = pd.concat([ew.eri, iv.eri, hrp.eri, mv.eri, erc.eri], axis=1)
+df_eri = pd.concat([ew.eri, iv.eri, hrp.eri, mv.eri, erc.eri, ms.eri], axis=1)
 
 # Performance
-perf = Performance(df_eri)
-print(perf.table)
+perf_port = Performance(df_eri)
+print(perf_port.table)
 
-# ERI
+# ERI Chart
 df_eri.plot(grid=True, title='ERIs')
 plt.show()
 
 # Weights
-df_w = pd.concat([ew.weights, iv.weights, hrp.weights, mv.weights, erc.weights], axis=1)
+df_w = pd.concat([ew.weights, iv.weights, hrp.weights, mv.weights, erc.weights, ms.weights], axis=1)
 df_w = df_w.fillna(0)
 df_w['Mean'] = df_w.mean(axis=1)
 df_w = df_w.sort_values('Mean')
