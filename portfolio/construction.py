@@ -92,7 +92,7 @@ class MinVar(object):
 
         ret = eri.pct_change(1)
         minvar = ret * self.weights
-        minvar = minvar.dropna(how='all')
+        minvar = minvar.dropna()
         minvar = minvar.sum(axis=1)
         minvar = (1 + minvar).cumprod()
         minvar = 100 * minvar / minvar.iloc[0]
@@ -140,7 +140,7 @@ class HRP(object):
 
         ret = eri.pct_change(1)
         hrp = ret * self.weights
-        hrp = hrp.dropna(how='all')
+        hrp = hrp.dropna()
         hrp = hrp.sum(axis=1)
         hrp = (1 + hrp).cumprod()
         hrp = 100 * hrp / hrp.iloc[0]
@@ -280,7 +280,7 @@ class ERC(object):
 
         ret = eri.pct_change(1)
         erc = ret * self.weights
-        erc = erc.dropna(how='all')
+        erc = erc.dropna()
         erc = erc.sum(axis=1)
         erc = (1 + erc).cumprod()
         erc = 100 * erc / erc.iloc[0]
@@ -368,7 +368,7 @@ class MaxSharpe(object):
         # Generate the ERI
         ret = eri.pct_change(1)
         mkw = ret * self.weights
-        mkw = mkw.dropna(how='all')
+        mkw = mkw.dropna()
         mkw = mkw.sum(axis=1)
         mkw = (1 + mkw).cumprod()
         mkw = 100 * mkw / mkw.iloc[0]

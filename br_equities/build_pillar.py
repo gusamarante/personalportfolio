@@ -6,16 +6,21 @@ from portfolio import Performance, EqualWeighted, InverseVol, HRP, MinVar, ERC, 
 pd.set_option('display.max_columns', 500)
 pd.set_option('display.width', 1000)
 
-# TODO Correct weighting for missing weights
-
 # Data
 df = tracker_feeder()
 df = df['br equities'].dropna(how='all')
-df = df[['BOVA', 'BBSD', 'SMAL']]
+df = df[['BOVA', 'BBSD']]
 eri = compute_eri(df)
+
 cov = eri.pct_change(1).dropna().cov() * 252
+corr = eri.pct_change(1).dropna().corr()
+print(corr)
+
 perf_asset = Performance(eri)
 print(perf_asset.table)
+
+eri.plot(grid=True, title='ERIs')
+plt.show()
 
 # ===== Construction Methods =====
 # Equal weighted
