@@ -1,5 +1,5 @@
 from data import tracker_feeder
-from utils import timeseries_momentum
+from models import timeseries_momentum
 
 df = tracker_feeder()
 df = df['br nominal rates']
