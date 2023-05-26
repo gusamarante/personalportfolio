@@ -1,17 +1,23 @@
+import pandas as pd
+from utils import compute_eri
 from data import tracker_feeder
-from models import timeseries_momentum
+import matplotlib.pyplot as plt
+from models import timeseries_momentum, Regression
+from portfolio import Performance
+pd.set_option('display.max_columns', 500)
+pd.set_option('display.width', 1000)
 
 df = tracker_feeder()
 df = df['br nominal rates']
-vars2keep = df.columns.str.contains('y')
-df = df[df.columns[vars2keep]]
 df = df.dropna()
 
-ts_signal, ts_signal_scaled, ts_signal_sign = timeseries_momentum(df)
-ts_signal = ts_signal.resample('M').last().shift(1)
-ts_signal_scaled = ts_signal_scaled.resample('M').last().shift(1)
-ts_signal_sign = ts_signal_sign.resample('M').last().shift(1)
+lookback = [1, 3, 6, 12, 24, 36, 60]
+holding_period = [1, 2, 3, 6, 12, 24]
 
-returns = df.pct_change(21).resample('M').last()
+eri = compute_eri(df)
 
+ts_signal_1y, ts_signal_scaled_1y, ts_signal_sign_1y = timeseries_momentum(eri['NTNF 8y'], hp=252)
+ts_signal_6m, ts_signal_scaled_6m, ts_signal_sign_6m = timeseries_momentum(eri['NTNF 8y'], hp=126)
+
+# TODO Upload signals
 
