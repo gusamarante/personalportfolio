@@ -1,12 +1,19 @@
+"""
+Computes the curve PCAs
+Requires:
+- curve bootstrapp
+- fixed duration trackers
+"""
+
 from data import curve_feeder, sgs, signal_uploader, tracker_feeder
 from sklearn.decomposition import PCA
 import pandas as pd
 import numpy as np
+pd.set_option('display.max_columns', 500)
+pd.set_option('display.width', 1000)
 
 df_tracker = tracker_feeder()
 df_tracker = df_tracker['br nominal rates']
-vars2keep = df_tracker.columns.str.contains('y')
-df_tracker = df_tracker[df_tracker.columns[vars2keep]]
 df_tracker = df_tracker.dropna()
 
 df = curve_feeder()
